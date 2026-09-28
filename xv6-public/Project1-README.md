@@ -44,35 +44,35 @@ As required by the Part 3 assignment task, I tracked all instances of `getpid` a
 ## 6. Verification & Screenshots
 
 ### A. Source Code Implementation
-*<img width="1091" height="531" alt="Screenshot From 2026-09-27 22-23-40" src="https://github.com/user-attachments/assets/24c0f2da-9318-4d7a-a94e-fc80e4e67b81" />
-*
-**<img width="1091" height="657" alt="Screenshot From 2026-09-27 22-24-09" src="https://github.com/user-attachments/assets/dfabb9e0-9199-44a2-8a83-e57ec1daa6d9" />
+<img width="1091" height="531" alt="Screenshot From 2026-09-27 22-23-40" src="https://github.com/user-attachments/assets/24c0f2da-9318-4d7a-a94e-fc80e4e67b81" />
 
-*<img width="1435" height="836" alt="Screenshot From 2026-09-27 22-25-22" src="https://github.com/user-attachments/assets/42651450-8b59-4df8-b5a1-199ff477df2e" />
-*
-*<img width="1435" height="836" alt="Screenshot From 2026-09-27 22-25-59" src="https://github.com/user-attachments/assets/7fe02795-6726-492d-aeb9-7f4bda857c18" />
-*
-*<img width="1413" height="805" alt="Screenshot From 2026-09-27 22-26-35" src="https://github.com/user-attachments/assets/4d226f98-ebd7-4771-b0d7-3bda53b5167b" />
-*
-*<img width="1413" height="851" alt="Screenshot From 2026-09-27 22-27-23" src="https://github.com/user-attachments/assets/06f96863-bf8b-487e-854b-3ffd99707cd5" />
-*
+<img width="1091" height="657" alt="Screenshot From 2026-09-27 22-24-09" src="https://github.com/user-attachments/assets/dfabb9e0-9199-44a2-8a83-e57ec1daa6d9" />
+
+<img width="1435" height="836" alt="Screenshot From 2026-09-27 22-25-22" src="https://github.com/user-attachments/assets/42651450-8b59-4df8-b5a1-199ff477df2e" />
+
+<img width="1435" height="836" alt="Screenshot From 2026-09-27 22-25-59" src="https://github.com/user-attachments/assets/7fe02795-6726-492d-aeb9-7f4bda857c18" />
+
+<img width="1413" height="805" alt="Screenshot From 2026-09-27 22-26-35" src="https://github.com/user-attachments/assets/4d226f98-ebd7-4771-b0d7-3bda53b5167b" />
+
+<img width="1413" height="851" alt="Screenshot From 2026-09-27 22-27-23" src="https://github.com/user-attachments/assets/06f96863-bf8b-487e-854b-3ffd99707cd5" />
+
 
 ### B. Build & Compilation Process
-*<img width="1913" height="1042" alt="Screenshot From 2026-09-27 22-28-34" src="https://github.com/user-attachments/assets/e23ea243-1634-4baa-9ccd-eb6bfdc29696" />
-*
-*<img width="1913" height="1042" alt="Screenshot From 2026-09-27 22-29-32" src="https://github.com/user-attachments/assets/7697cf0f-5489-4c34-bac6-a209d0f2962e" />
-*
+<img width="1913" height="1042" alt="Screenshot From 2026-09-27 22-28-34" src="https://github.com/user-attachments/assets/e23ea243-1634-4baa-9ccd-eb6bfdc29696" />
+
+<img width="1913" height="1042" alt="Screenshot From 2026-09-27 22-29-32" src="https://github.com/user-attachments/assets/7697cf0f-5489-4c34-bac6-a209d0f2962e" />
+
 
 ### C. Execution & Functional Verification
 hello
-*<img width="1913" height="1042" alt="Screenshot From 2026-09-27 22-29-49" src="https://github.com/user-attachments/assets/ea193654-7206-4187-b33c-0edde7fd21fd" />
-*
+<img width="1913" height="1042" alt="Screenshot From 2026-09-27 22-29-49" src="https://github.com/user-attachments/assets/ea193654-7206-4187-b33c-0edde7fd21fd" />
+
 ls
-*<img width="1913" height="1042" alt="Screenshot From 2026-09-27 22-30-30" src="https://github.com/user-attachments/assets/7bf4ce55-ea16-4361-8526-f076a6df457c" />
-*
+<img width="1913" height="1042" alt="Screenshot From 2026-09-27 22-30-30" src="https://github.com/user-attachments/assets/7bf4ce55-ea16-4361-8526-f076a6df457c" />
+
 ls -a
-*<img width="1913" height="1042" alt="Screenshot From 2026-09-27 22-30-56" src="https://github.com/user-attachments/assets/e6647f1e-55ae-4d27-a3e9-81d409e59db6" />
-*
+<img width="1913" height="1042" alt="Screenshot From 2026-09-27 22-30-56" src="https://github.com/user-attachments/assets/e6647f1e-55ae-4d27-a3e9-81d409e59db6" />
+
 sleep and sleep 100
-*<img width="1913" height="267" alt="Screenshot From 2026-09-27 22-31-48" src="https://github.com/user-attachments/assets/bdae44dd-3a1e-453e-bbbc-6e395cc134a1" />
-*
+<img width="1913" height="267" alt="Screenshot From 2026-09-27 22-31-48" src="https://github.com/user-attachments/assets/bdae44dd-3a1e-453e-bbbc-6e395cc134a1" />
+
