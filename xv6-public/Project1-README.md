@@ -37,7 +37,7 @@ As required by the Part 3 assignment task, I tracked all instances of `getpid` a
 
 ## 5. Resources Used & Concept Clarifications
 * **xv6 Commentary & Source Code:** Used existing user utilities (`echo.c`, `grep.c`, `cat.c`) and system call handlers (`sys_sleep` in `sysproc.c`) to model user-space argument retrieval and trap entry mechanics.
-* **Course Lectures & Canvas Assignment Guidelines:** Clarified trap handling, user-to-kernel context switches, and file system directory table parsing.
+* **Course Lectures & Canvas Assignment Guidelines:** Clarified trap handling, user-to-kernel context switches, and file system directory table parsing. And used Gemini for understanding the code when stuck. 
 
 ---
 
