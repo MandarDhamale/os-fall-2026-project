@@ -1,0 +1,64 @@
+SeaBIOS (version 1.17.0-debian-1.17.0-1ubuntu1)
+
+
+iPXE (https://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+1EFC8E00+1EF08E00 CA00
+                                                                               
+
+
+Booting from Hard Disk..xv6...
+cpu0: starting 0
+sb: size 1000 nblocks 941 ninodes 200 nlog 30 logstart 2 inodestart 32 bmap start 58
+init: starting sh
+$ hello 
+Hello, Xv6!
+Hello from the Kernel!
+$ ls
+README         2 2 2286
+cat            2 3 16136
+echo           2 4 15028
+forktest       2 5 9084
+grep           2 6 18988
+init           2 7 15636
+kill           2 8 15104
+ln             2 9 14972
+ls             2 10 18268
+mkdir          2 11 15100
+rm             2 12 15084
+sh             2 13 29092
+stressfs       2 14 15928
+usertests      2 15 63812
+wc             2 16 16436
+zombie         2 17 14672
+hello          2 18 14844
+sleep          2 19 15036
+console        3 20 0
+$ ls -a
+.             / 1 1 512
+..            / 1 1 512
+README         2 2 2286
+cat            2 3 16136
+echo           2 4 15028
+forktest       2 5 9084
+grep           2 6 18988
+init           2 7 15636
+kill           2 8 15104
+ln             2 9 14972
+ls             2 10 18268
+mkdir          2 11 15100
+rm             2 12 15084
+sh             2 13 29092
+stressfs       2 14 15928
+usertests      2 15 63812
+wc             2 16 16436
+zombie         2 17 14672
+hello          2 18 14844
+sleep          2 19 15036
+console        3 20 0
+$ sleep 10
+$ sleep
+Error: Usage: sleep <duration>
+$ sleep 1000
+$ 
+ *  History restored 
+
+(base) mandardhamale@mandardhamale:~/Downloads/OS Fall 2026/Project/xv6-public$ 
