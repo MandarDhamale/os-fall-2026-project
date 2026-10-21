@@ -95,3 +95,53 @@ int sys_hello(void)
   cprintf("Hello from the Kernel!\n");
   return 0;
 }
+
+int
+sys_ticks_running(void)
+{
+  int pid;
+
+  if(argint(0, &pid) < 0)
+    return -1;
+  return ticks_running(pid);
+}
+
+int
+sys_sjf_job_length(void)
+{
+  int pid;
+
+  if(argint(0, &pid) < 0)
+    return -1;
+  return sjf_job_length(pid);
+}
+
+int
+sys_set_sched_priority(void)
+{
+  int priority;
+
+  if(argint(0, &priority) < 0)
+    return -1;
+  return set_sched_priority(priority);
+}
+
+int
+sys_get_sched_priority(void)
+{
+  int pid;
+
+  if(argint(0, &pid) < 0)
+    return -1;
+  return get_sched_priority(pid);
+}
+
+int
+sys_set_sched_quantum(void)
+{
+  int quantum;
+
+  if(argint(0, &quantum) < 0)
+    return -1;
+  return set_sched_quantum(quantum);
+}

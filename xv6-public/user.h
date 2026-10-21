@@ -24,6 +24,11 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int hello(void); // add the new hello system call
+int ticks_running(int);
+int sjf_job_length(int);
+int set_sched_priority(int);
+int get_sched_priority(int);
+int set_sched_quantum(int);
 
 // ulib.c
 int stat(const char*, struct stat*);

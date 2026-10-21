@@ -5,13 +5,34 @@
 #include "user.h"
 
 char buf[1024];
+int flag_i = 0;
+int flag_n = 0;
+int flag_v = 0;
+
 int match(char*, char*);
+
+char
+tolower_char(char c)
+{
+  if(c >= 'A' && c <= 'Z')
+    return c + ('a' - 'A');
+  return c;
+}
+
+int
+char_eq(char a, char b)
+{
+  if(flag_i)
+    return tolower_char(a) == tolower_char(b);
+  return a == b;
+}
 
 void
 grep(char *pattern, int fd)
 {
   int n, m;
   char *p, *q;
+  int line_num = 1;
 
   m = 0;
   while((n = read(fd, buf+m, sizeof(buf)-m-1)) > 0){
@@ -20,10 +41,14 @@ grep(char *pattern, int fd)
     p = buf;
     while((q = strchr(p, '\n')) != 0){
       *q = 0;
-      if(match(pattern, p)){
+      int matched = match(pattern, p);
+      if((matched && !flag_v) || (!matched && flag_v)){
+        if(flag_n)
+          printf(1, "%d:", line_num);
         *q = '\n';
         write(1, p, q+1 - p);
       }
+      line_num++;
       p = q+1;
     }
     if(p == buf)
@@ -33,26 +58,52 @@ grep(char *pattern, int fd)
       memmove(buf, p, m);
     }
   }
+  if(m > 0){
+    buf[m] = '\0';
+    int matched = match(pattern, buf);
+    if((matched && !flag_v) || (!matched && flag_v)){
+      if(flag_n)
+        printf(1, "%d:", line_num);
+      printf(1, "%s\n", buf);
+    }
+  }
 }
 
 int
 main(int argc, char *argv[])
 {
-  int fd, i;
+  int fd, i, j;
   char *pattern;
+  int arg_idx = 1;
 
-  if(argc <= 1){
-    printf(2, "usage: grep pattern [file ...]\n");
+  while(arg_idx < argc && argv[arg_idx][0] == '-' && argv[arg_idx][1] != '\0'){
+    for(j = 1; argv[arg_idx][j] != '\0'; j++){
+      if(argv[arg_idx][j] == 'i')
+        flag_i = 1;
+      else if(argv[arg_idx][j] == 'n')
+        flag_n = 1;
+      else if(argv[arg_idx][j] == 'v')
+        flag_v = 1;
+      else {
+        printf(2, "grep: invalid option -%c\n", argv[arg_idx][j]);
+        exit();
+      }
+    }
+    arg_idx++;
+  }
+
+  if(arg_idx >= argc){
+    printf(2, "usage: grep [-inv] pattern [file ...]\n");
     exit();
   }
-  pattern = argv[1];
+  pattern = argv[arg_idx++];
 
-  if(argc <= 2){
+  if(arg_idx >= argc){
     grep(pattern, 0);
     exit();
   }
 
-  for(i = 2; i < argc; i++){
+  for(i = arg_idx; i < argc; i++){
     if((fd = open(argv[i], 0)) < 0){
       printf(1, "grep: cannot open %s\n", argv[i]);
       exit();
@@ -90,7 +141,7 @@ int matchhere(char *re, char *text)
     return matchstar(re[0], re+2, text);
   if(re[0] == '$' && re[1] == '\0')
     return *text == '\0';
-  if(*text!='\0' && (re[0]=='.' || re[0]==*text))
+  if(*text!='\0' && (re[0]=='.' || char_eq(re[0], *text)))
     return matchhere(re+1, text+1);
   return 0;
 }
@@ -101,7 +152,6 @@ int matchstar(int c, char *re, char *text)
   do{  // a * matches zero or more instances
     if(matchhere(re, text))
       return 1;
-  }while(*text!='\0' && (*text++==c || c=='.'));
+  }while(*text!='\0' && (char_eq(*text++, c) || c=='.'));
   return 0;
 }
-

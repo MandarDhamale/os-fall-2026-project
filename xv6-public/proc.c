@@ -15,6 +15,28 @@ struct {
 static struct proc *initproc;
 
 int nextpid = 1;
+const int SJF_MIN_LENGTH = 10;
+const int SJF_MAX_LENGTH = 100;
+static uint rand_seed = 123456789;
+
+const int NUM_PRIORITY_LEVELS = 3;
+const int PRIORITY_HIGH = 1;
+const int PRIORITY_MEDIUM = 2;
+const int PRIORITY_LOW = 3;
+const int DEFAULT_PRIORITY = 2;
+const int DEFAULT_TIME_QUANTUM = 4;
+int rr_time_quantum = 4;
+#ifdef SCHED_PRIORITYRR
+static int rr_idx = 0;
+#endif
+
+int
+rand(void)
+{
+  rand_seed = rand_seed * 1103515245 + 12345;
+  return (int)((rand_seed / 65536) & 0x7fff);
+}
+
 extern void forkret(void);
 extern void trapret(void);
 
@@ -88,6 +110,10 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->ticks_running = 0;
+  p->job_length = SJF_MIN_LENGTH + (rand() % (SJF_MAX_LENGTH - SJF_MIN_LENGTH + 1));
+  p->priority = DEFAULT_PRIORITY;
+  p->quantum_ticks = 0;
 
   release(&ptable.lock);
 
@@ -294,6 +320,10 @@ wait(void)
         p->parent = 0;
         p->name[0] = 0;
         p->killed = 0;
+        p->ticks_running = 0;
+        p->job_length = 0;
+        p->priority = 0;
+        p->quantum_ticks = 0;
         p->state = UNUSED;
         release(&ptable.lock);
         return pid;
@@ -332,6 +362,57 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+#ifdef SCHED_SJF
+    struct proc *shortest_p = 0;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
+      if(shortest_p == 0 || p->job_length < shortest_p->job_length)
+        shortest_p = p;
+    }
+    if(shortest_p != 0){
+      p = shortest_p;
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+    }
+#elif defined(SCHED_PRIORITYRR)
+    struct proc *best_p = 0;
+    int i, idx;
+    int best_idx = rr_idx;
+    for(i = 1; i <= NPROC; i++){
+      idx = (rr_idx + i) % NPROC;
+      p = &ptable.proc[idx];
+      if(p->state != RUNNABLE)
+        continue;
+      if(best_p == 0 || p->priority < best_p->priority){
+        best_p = p;
+        best_idx = idx;
+      }
+    }
+    if(best_p != 0){
+      rr_idx = best_idx;
+      p = best_p;
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+      p->quantum_ticks = 0;
+
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+    }
+#else
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -350,6 +431,7 @@ scheduler(void)
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
+#endif
     release(&ptable.lock);
 
   }
@@ -532,3 +614,98 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+// Return the number of ticks the process with given pid has been scheduled (in RUNNING state).
+// Returns 0 if the process exists in ptable but has not been scheduled yet.
+// Returns -1 if no process with the supplied pid exists in the process table.
+int
+ticks_running(int pid)
+{
+  struct proc *p;
+  int ticks_count = -1;
+
+  if(pid <= 0)
+    return -1;
+
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->state != UNUSED && p->pid == pid){
+      ticks_count = p->ticks_running;
+      break;
+    }
+  }
+  release(&ptable.lock);
+  return ticks_count;
+}
+
+// Return the predicted SJF job length for the given pid.
+// Returns -1 if the process does not exist or is not in the scheduling queue (RUNNABLE or RUNNING).
+int
+sjf_job_length(int pid)
+{
+  struct proc *p;
+  int len = -1;
+
+  if(pid <= 0)
+    return -1;
+
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid && (p->state == RUNNABLE || p->state == RUNNING)){
+      len = p->job_length;
+      break;
+    }
+  }
+  release(&ptable.lock);
+  return len;
+}
+
+// Set the priority of the currently running process.
+int
+set_sched_priority(int priority)
+{
+  struct proc *curproc = myproc();
+  if(curproc == 0 || priority < 1)
+    return -1;
+
+  acquire(&ptable.lock);
+  curproc->priority = priority;
+  curproc->quantum_ticks = 0;
+  release(&ptable.lock);
+  return 0;
+}
+
+// Return the priority of the given process.
+// Returns -1 if the process does not exist or is not in the scheduling queue (RUNNABLE or RUNNING).
+int
+get_sched_priority(int pid)
+{
+  struct proc *p;
+  int prio = -1;
+
+  if(pid <= 0)
+    return -1;
+
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid && (p->state == RUNNABLE || p->state == RUNNING)){
+      prio = p->priority;
+      break;
+    }
+  }
+  release(&ptable.lock);
+  return prio;
+}
+
+// Set the Round-Robin time quantum (in ticks) for PRIORITYRR.
+int
+set_sched_quantum(int quantum)
+{
+  if(quantum < 1)
+    return -1;
+  acquire(&ptable.lock);
+  rr_time_quantum = quantum;
+  release(&ptable.lock);
+  return 0;
+}
+

@@ -49,7 +49,22 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  int ticks_running;           // Number of ticks scheduled (in RUNNING state)
+  int job_length;              // Predicted job length for SJF scheduler
+  int priority;                // Process priority for PRIORITYRR scheduler
+  int quantum_ticks;           // Ticks elapsed in current RR time quantum
 };
+
+extern const int SJF_MIN_LENGTH;
+extern const int SJF_MAX_LENGTH;
+
+extern const int NUM_PRIORITY_LEVELS;
+extern const int PRIORITY_HIGH;
+extern const int PRIORITY_MEDIUM;
+extern const int PRIORITY_LOW;
+extern const int DEFAULT_PRIORITY;
+extern const int DEFAULT_TIME_QUANTUM;
+extern int rr_time_quantum;
 
 // Process memory is laid out contiguously, low addresses first:
 //   text

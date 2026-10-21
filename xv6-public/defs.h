@@ -120,6 +120,11 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
+int             ticks_running(int);
+int             sjf_job_length(int);
+int             set_sched_priority(int);
+int             get_sched_priority(int);
+int             set_sched_quantum(int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

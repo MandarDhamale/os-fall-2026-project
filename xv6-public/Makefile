@@ -90,6 +90,21 @@ ifneq ($(shell $(CC) -dumpspecs 2>/dev/null | grep -e '[^f]nopie'),)
 CFLAGS += -fno-pie -nopie
 endif
 
+ifndef SCHEDULER
+SCHEDULER := DEFAULT
+endif
+SCHED_CLEAN := $(subst ],,$(subst [,,$(SCHEDULER)))
+CFLAGS += -DSCHED_$(SCHED_CLEAN)
+
+# Force rebuild of proc.o and trap.o whenever SCHEDULER changes
+SCHED_FILE := .scheduler_$(SCHED_CLEAN)
+$(SCHED_FILE):
+	rm -f .scheduler_* proc.o trap.o kernel xv6.img
+	touch $(SCHED_FILE)
+
+proc.o: proc.c $(SCHED_FILE)
+trap.o: trap.c $(SCHED_FILE)
+
 xv6.img: bootblock kernel
 	dd if=/dev/zero of=xv6.img count=10000
 	dd if=bootblock of=xv6.img conv=notrunc
@@ -184,6 +199,9 @@ UPROGS=\
 	_hello\
 	_sleep\
 	_sort\
+	_ticks_running_test\
+	_simple_scheduler_test\
+	_advanced_scheduler_test\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -194,7 +212,7 @@ clean:
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
 	*.o *.d *.asm *.sym vectors.S bootblock entryother \
 	initcode initcode.out kernel xv6.img fs.img kernelmemfs \
-	xv6memfs.img mkfs .gdbinit \
+	xv6memfs.img mkfs .gdbinit .scheduler_* \
 	$(UPROGS)
 
 # make a printout
@@ -253,7 +271,8 @@ qemu-nox-gdb: fs.img xv6.img .gdbinit
 EXTRA=\
 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
-	printf.c umalloc.c sort.c\
+	printf.c umalloc.c sort.c ticks_running_test.c simple_scheduler_test.c\
+	advanced_scheduler_test.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 
