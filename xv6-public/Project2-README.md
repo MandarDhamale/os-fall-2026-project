@@ -113,25 +113,4 @@ We ran our test suites across all three schedulers (`DEFAULT`, `SJF`, and `PRIOR
   * Under `SJF`, if the consumer (`sort` or `grep`) is assigned a smaller `job_length` than `cat`, it gets scheduled first, immediately blocks on an empty pipe (`piperead` calls `sleep()`), which removes it from the `RUNNABLE` queue and allows `cat` to run and fill the pipe. Once `cat` writes to the pipe or exits, `wakeup()` makes the consumer `RUNNABLE` again. Thus, pipelines still complete accurately under all three schedulers.
   * Under `PRIORITYRR`, both piped children inherit `DEFAULT_PRIORITY (2)` from `fork()` and share the CPU in Round-Robin slices of `rr_time_quantum` ticks, resulting in fewer intermediate context switches on large inputs while maintaining smooth pipe throughput.
 
----
-
-## 5. Verification & Screenshots
-
-### A. Compiling xv6 with Scheduler Flags
-*[Insert screenshot of terminal running `make clean && make qemu-nox SCHEDULER=DEFAULT`]*
-*[Insert screenshot of terminal running `make clean && make qemu-nox SCHEDULER=SJF`]*
-*[Insert screenshot of terminal running `make clean && make qemu-nox SCHEDULER=PRIORITYRR`]*
-
-### B. Part 1: `sort` and `grep` Functional Verification
-*[Insert screenshot of `sort`, `sort -r`, `sort -n`, `sort -u`, and `cat file | sort` in xv6]*
-*[Insert screenshot of `grep`, `grep -i`, `grep -n`, `grep -v`, `grep -in`, and `cat file | grep` in xv6]*
-
-### C. Part 2: `ticks_running_test` Execution
-*[Insert screenshot of running `ticks_running_test` in xv6 shell]*
-
-### D. Part 3: `simple_scheduler_test` (`SJF`) Execution
-*[Insert screenshot of running `simple_scheduler_test` under `SCHEDULER=SJF`]*
-
-### E. Part 4: `advanced_scheduler_test` (`PRIORITYRR`) Execution
-*[Insert screenshot of running `advanced_scheduler_test` and `advanced_scheduler_test 8` under `SCHEDULER=PRIORITYRR`]*
 
